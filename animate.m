@@ -23,10 +23,10 @@ vidfile = VideoWriter(name,'Motion JPEG AVI');
 open(vidfile);
 
 %Crea figura con dimensioni fisse (560x420) e rimuovi bordi
-fig = figure('Position', [100, 100, 720, 576], ...  % Larghezza=560, Altezza=420
-             'MenuBar', 'none', ...                 % Rimuove barra dei menu
-             'ToolBar', 'none', ...                 % Rimuove barra degli strumenti
-             'Resize', 'off');                      % Blocca ridimensionamento
+%% loop through frames
+figure('Position',[200 100 1000 600]);
+set(0, 'DefaultFigureRenderer', 'opengl');
+set(gcf, 'Color', 'white')
 
 axis tight manual;  % Impedisce cambiamenti automatici degli assi
 hold on;
@@ -39,7 +39,7 @@ set(gca, 'Position', [0, 0, 1, 1]);  % [left, bottom, width, height] in normaliz
 %figure (se non si vuole creare il video)
 for k = 1:length(T)
     clf;
-    hold on;
+    hold on; grid on;axis square;axis equal;
 
     % Se attivo il contatto con le pareti, disegna i bordi del tubo
     if param.contact == 1
@@ -57,9 +57,6 @@ for k = 1:length(T)
         plot([x_min, x_max], [y1, y1], 'k--', 'LineWidth', 2);  % parete inferiore
         plot([x_min, x_max], [y2, y2], 'k--', 'LineWidth', 2);  % parete superiore
     end
-
-    grid on;
-    axis equal;
     title(sprintf('t = %.2f s', T(k)));
     
     for i = 1:param.N
@@ -98,8 +95,7 @@ for k = 1:length(T)
     plot(x_c, y_strip + h_strip/2, 'ko', 'MarkerFaceColor', 'r', 'MarkerSize', 6);
 
     % Cattura frame e scrivi nel video
-    frame = getframe(fig);  % <-- cattura SOLO l'area assi (stabile)
-    writeVideo(vidfile, frame);
+    writeVideo(vidfile, getframe(gcf));
     drawnow;
 end
 close(vidfile);
