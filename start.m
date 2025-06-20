@@ -67,6 +67,6 @@ x0          = [qa;qu;qaDot;quDot];
 [T,X] = ode45(@(t,y)dynamicModel(t,y,param),t,x0);
 
 %animate(T,param,X);
-showResults(T,param,X);
+%showResults(T,param,X);
 
 

@@ -42,6 +42,8 @@ function [xDot, x_c,y_c, fr, fcontact, ground] = dynamicModel(t,x,param)
             end
         end
     end
+
+    A
     
     for i1=1:N-1
         for i2 = 1:(N)
@@ -53,6 +55,8 @@ function [xDot, x_c,y_c, fr, fcontact, ground] = dynamicModel(t,x,param)
             end
         end
     end
+
+    D
     
     Va= A'/(D*D')*A;
     Ka = A'/(D*D')*D;
@@ -67,6 +71,9 @@ function [xDot, x_c,y_c, fr, fcontact, ground] = dynamicModel(t,x,param)
             end
         end
     end
+
+    J
+
     K = zeros(N,N+1);
     for i1=1:N
         for i2 = 1:N+1
@@ -75,6 +82,8 @@ function [xDot, x_c,y_c, fr, fcontact, ground] = dynamicModel(t,x,param)
             end
         end
     end
+    K
+
     
     for i1=1:N
         for i2 = 1:(N-1)
@@ -86,6 +95,7 @@ function [xDot, x_c,y_c, fr, fcontact, ground] = dynamicModel(t,x,param)
             end
         end
     end
+    J2
     
     for i1=1:N
         for i2 = 1:(N-1)
@@ -97,6 +107,7 @@ function [xDot, x_c,y_c, fr, fcontact, ground] = dynamicModel(t,x,param)
             end
         end
     end
+    Jf
     
     HH = ones(N,N);
     HH = triu(HH);
@@ -243,6 +254,7 @@ function [xDot, x_c,y_c, fr, fcontact, ground] = dynamicModel(t,x,param)
         end
     end
 
+    u
     M = I*eye(N) + m*l*l*Sm*Va*Sm + m*l*l*Cm*Va*Cm;
     W = m*l*l*Sm*Va*Cm - m*l*l*Cm*Va*Sm;
 
