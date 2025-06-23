@@ -43,7 +43,7 @@ function [xDot, x_c,y_c, fr, fcontact, ground] = dynamicModel(t,x,param)
         end
     end
 
-    A
+    size(A)
     
     for i1=1:N-1
         for i2 = 1:(N)
@@ -56,10 +56,13 @@ function [xDot, x_c,y_c, fr, fcontact, ground] = dynamicModel(t,x,param)
         end
     end
 
-    D
+     size(D)
+    
     
     Va= A'/(D*D')*A;
     Ka = A'/(D*D')*D;
+    size(Va)
+    
         
     for i1=1:N
         for i2 = 1:(N+1)
@@ -72,7 +75,7 @@ function [xDot, x_c,y_c, fr, fcontact, ground] = dynamicModel(t,x,param)
         end
     end
 
-    J
+    sJ = size(J)
 
     K = zeros(N,N+1);
     for i1=1:N
