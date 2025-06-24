@@ -7,10 +7,11 @@ FRX = zeros(param.N,nSteps);       % Forza propulsiva - senza pareti - su x
 FRY = zeros(param.N,nSteps);       % Forza propulsiva - senza pareti - su y
 FCN = zeros(param.N, nSteps);           % forza normale (contatto parete)
 FCT = zeros(param.N, nSteps);           % forza tangenziale (contatto parete)
-
+%XS1 = zeros(nSteps);
+%YS1 = zeros(nSteps);
 for k = 1:nSteps
     x_k = X(k,:)';  % vettore colonna
-    [~, x_c, y_c, fr, fcontact, ~] = dynamicModel(T(k), x_k, param);    
+    [~, x_c, y_c, fr, fcontact, ~, ~, ~,x_s1,y_s1,p] = dynamicModel(T(k), x_k, param);    
     Xc_all(:,k) = x_c;
     Yc_all(:,k) = y_c;
     FR(:,k) = fr(1,:)';                        % Forze propulsiva - senza pareti
@@ -18,6 +19,9 @@ for k = 1:nSteps
     FRY(:,k) = fr(param.N+1:end);              % Forza propulsiva - senza pareti - su y
     FCT(:,k) = fcontact(1:param.N);            % Forze tangenziali da parete
     FCN(:,k) = fcontact(param.N+1:end);        % Forze normali da parete
+    %XS1(:,k) = x_s1;
+    %YS1(:,k) = y_s1;
+
 end
 
 if param.Plot3D == 0
@@ -51,60 +55,66 @@ set(gca, 'Position', [0, 0, 1, 1]);  % [left, bottom, width, height] in normaliz
 for k = 1:length(T)
     clf;
     hold on; grid on;axis square;axis equal;
-
-    scale_force = 0.5;  % fattore di scala per la lunghezza delle frecce
+%% Force part
+    %scale_force = 0.5;  % fattore di scala per la lunghezza delle frecce
     % Se attivo il contatto con le pareti, disegna i bordi del tubo
-    if param.contact == 0
-        for i = 1:param.N
-            fr_x = FRX(i,k);
-            fr_y = FRY(i,k);
-        if abs(fr_x) > 1e-4 || (fr_y) > 1e-4
-            xc = Xc_all(i, k);
-            yc = Yc_all(i, k);
+    % if param.contact == 0
+    %     for i = 1:param.N
+    %         fr_x = FRX(i,k);
+    %         fr_y = FRY(i,k);
+    %     if abs(fr_x) > 1e-4 || (fr_y) > 1e-4
+    %         xc = Xc_all(i, k);
+    %         yc = Yc_all(i, k);
+    % 
+    %         %Forza tangenziale: verso x
+    %         quiver(xc, yc, 50*fr_x, 0, 0, 'Color', 'b', 'LineWidth', 2, 'MaxHeadSize', 1);
+    % 
+    %         %Forza normale: verso y
+    %         quiver(xc, yc, 0, 50*fr_y, 0, 'Color', 'r', 'LineWidth', 2, 'MaxHeadSize', 1);
+    %     end
+    %     end
+    % else
+    % 
+    %     % Lunghezza del tubo (visualizzazione): centrata sul baricentro
+    %     x_c = mean(Xc_all(:,k));
+    %     L_view = 2;  % lunghezza visiva del tratto del tubo
+    %     x_min = x_c - L_view;
+    %     x_max = x_c + L_view;
+    % 
+    %     % Coordinate pareti
+    %     y1 = -param.diameter/2;
+    %     y2 = +param.diameter/2;
+    % 
+    %     % Disegna le due pareti come linee
+    %     plot([x_min, x_max], [y1, y1], 'k--', 'LineWidth', 1);  % parete inferiore
+    %     plot([x_min, x_max], [y2, y2], 'k--', 'LineWidth', 1);  % parete superiore
+    % 
+    % 
+    %     for i = 1:param.N
+    %     fn = FCN(i,k);
+    %     ft = FCT(i,k);
+    % 
+    %     % Solo se c'è una forza non nulla
+    %     if abs(fn) > 1e-4 || abs(ft) > 1e-4
+    %         xc = Xc_all(i, k);
+    %         yc = Yc_all(i, k);
+    % 
+    %         % Forza tangenziale: verso x
+    %         quiver(xc, yc, scale_force*ft, 0, 0, 'Color', 'b', 'LineWidth', 2, 'MaxHeadSize', 1);
+    %         % 
+    %         % % Forza normale: verso y
+    %         quiver(xc, yc, 0, scale_force*fn, 0, 'Color', 'r', 'LineWidth', 2, 'MaxHeadSize', 1);
+    %     end
+    %     end
+    % end
 
-            %Forza tangenziale: verso x
-            quiver(xc, yc, 50*fr_x, 0, 0, 'Color', 'b', 'LineWidth', 2, 'MaxHeadSize', 1);
-            
-            %Forza normale: verso y
-            quiver(xc, yc, 0, 50*fr_y, 0, 'Color', 'r', 'LineWidth', 2, 'MaxHeadSize', 1);
-        end
-        end
-    else
 
-        % Lunghezza del tubo (visualizzazione): centrata sul baricentro
-        x_c = mean(Xc_all(:,k));
-        L_view = 2;  % lunghezza visiva del tratto del tubo
-        x_min = x_c - L_view;
-        x_max = x_c + L_view;
-
-        % Coordinate pareti
-        y1 = -param.diameter/2;
-        y2 = +param.diameter/2;
-
-        % Disegna le due pareti come linee
-        plot([x_min, x_max], [y1, y1], 'k--', 'LineWidth', 1);  % parete inferiore
-        plot([x_min, x_max], [y2, y2], 'k--', 'LineWidth', 1);  % parete superiore
-
-        
-        for i = 1:param.N
-        fn = FCN(i,k);
-        ft = FCT(i,k);
-
-        % Solo se c'è una forza non nulla
-        if abs(fn) > 1e-4 || abs(ft) > 1e-4
-            xc = Xc_all(i, k);
-            yc = Yc_all(i, k);
-
-            % Forza tangenziale: verso x
-            quiver(xc, yc, scale_force*ft, 0, 0, 'Color', 'b', 'LineWidth', 2, 'MaxHeadSize', 1);
-            % 
-            % % Forza normale: verso y
-            quiver(xc, yc, 0, scale_force*fn, 0, 'Color', 'r', 'LineWidth', 2, 'MaxHeadSize', 1);
-        end
-        end
-    end
     title(sprintf('t = %.2f s', T(k)));
+    plot(x_s1,y_s1, 'b--', 'LineWidth',1.5);
     
+    
+
+
     for i = 1:param.N
         xc = Xc_all(i, k);
         yc = Yc_all(i, k);
@@ -115,10 +125,12 @@ for k = 1:length(T)
         fill(x_circle, y_circle, 'green', 'FaceAlpha', 0.5, 'EdgeColor', 'k');
     end
     
-   plot(Xc_all(:,k), Yc_all(:,k), '--', 'Color', [1, 0.5, 0.5], 'LineWidth', 1.5); % spina
-   % --- Calcola baricentro del serpente ---
+    
+    plot(Xc_all(:,k), Yc_all(:,k), '--', 'Color', [1, 0.5, 0.5], 'LineWidth', 1.5); % spina
+    % --- Calcola baricentro del serpente ---
     x_c = mean(Xc_all(:,k));  % baricentro asse X
     x_history(end+1) = x_c;
+
     x_margin = 1.5;            % quanto "zoom out" vuoi fare
     xlim([x_c - x_margin, x_c + x_margin]);
     ylim([-1, 1]);
